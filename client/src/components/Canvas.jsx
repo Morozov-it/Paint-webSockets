@@ -2,13 +2,18 @@ import React, { useEffect, useRef } from 'react';
 import {observer} from 'mobx-react-lite'
 import '../styles/canvas.scss';
 import CanvasStore from '../store/CanvasStore';
+import ToolStore from '../store/ToolStore';
+import Brush from '../tools/Brush';
 
 
 const Canvas = observer(() => {
     const canvasRef = useRef()
 
     useEffect(() => {
+        //первый рендер получение объекта canvas
         CanvasStore.setCanvas(canvasRef.current)
+        //сразу присваивание инструмента кисть
+        ToolStore.setTool(new Brush(canvasRef.current))
     }, [])
 
     return (
