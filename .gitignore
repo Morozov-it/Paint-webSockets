@@ -3,8 +3,9 @@
 # dependencies
 **/node_modules
 **/.pnp
-/npm.md
 .pnp.js
+# /npm.md
+
 
 
 # testing
