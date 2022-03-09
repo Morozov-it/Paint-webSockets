@@ -57,6 +57,7 @@
         border: 2px solid red;
     }
 }
+
 .setting {
     height: $toolbar-height;
     background-color: #fff;
@@ -66,4 +67,8 @@
     width: 100%;
     box-shadow: 0 4px 5px gray;
     top: $toolbar-height;
+
+    &-label, &-input {
+        margin-left: 10px;
+    }
 }

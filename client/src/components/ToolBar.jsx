@@ -3,12 +3,13 @@ import '../styles/toolbar.scss';
 import { observer } from 'mobx-react-lite';
 import CanvasStore from '../store/CanvasStore';
 import ToolStore from '../store/ToolStore';
+
 import Brush from '../tools/Brush';
 import Rect from '../tools/Rect';
 import Circle from '../tools/Circle';
 import Eraser from '../tools/Eraser';
 import Line from '../tools/Line';
-import Tool from '../tools/Tool';
+
 
 
 const ToolBar = observer(() => {
@@ -47,7 +48,8 @@ const ToolBar = observer(() => {
                 className={`toolbar__btn line ${active === 'line' && 'active'}`}></button>
             <input
                 onChange={(e) => {
-                    ToolStore.setColor(e.target.value);
+                    ToolStore.setFillColor(e.target.value);
+                    ToolStore.setStrokeColor(e.target.value);
                 }}
                 type='color'
                 className='toolbar__color'></input>

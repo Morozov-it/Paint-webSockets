@@ -4,7 +4,6 @@ class ToolStore {
     //init state
     _tool = null
     _active = 'brush'
-    _color = '#000'
 
     //autoobservable
     constructor() {
@@ -18,8 +17,14 @@ class ToolStore {
     setActive(tool) {
         this._active = tool
     }
-    setColor(color) {
-        this._color = color
+    setFillColor(color) {
+        this._tool.fillColor = color;
+    }
+    setStrokeColor(color) {
+        this._tool.strokeColor = color;
+    }
+    setLineWidth(width) {
+        this._tool.lineWidth = width;
     }
 
     //getters

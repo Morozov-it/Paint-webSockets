@@ -14,27 +14,25 @@ export default class Line extends Tool {
     }
 
     //обработчики слушателей событий мыши
-    mouseUpHandler(e) {
-        this.mouseDown = false
-    }
     mouseDownHandler(e) {
         this.mouseDown = true
+        //запись стартовой позиции курсора
+        this.currentX = e.pageX - e.target.offsetLeft;
+        this.currentY = e.pageY - e.target.offsetTop;
         //начало рисования новой линии
         this.ctx.beginPath()
-        //запись стартовой позиции курсора
-        this.startX = e.pageX - e.target.offsetLeft;
-        this.startY = e.pageY - e.target.offsetTop;
+        this.ctx.moveTo(this.currentX, this.currentY)
         //сохранение данных позиции в canvas
         this.saved = this.canvas.toDataURL();
+    }
+    mouseUpHandler(e) {
+        this.mouseDown = false
     }
     mouseMoveHandler(e) {
         //проверка нажатия левой кнопки мыши
         if (this.mouseDown) {
-            //получение текущей позиции курсора
-            let currentX = e.pageX - e.target.offsetLeft;
-            let currentY = e.pageY - e.target.offsetTop;
-            //вызов функции рисования с полученными координатами
-            this.draw(currentX, currentY)
+            //вызов функции рисования с текущими координатами
+            this.draw(e.pageX-e.target.offsetLeft, e.pageY-e.target.offsetTop)
         }
     }
 
@@ -43,7 +41,7 @@ export default class Line extends Tool {
         //создание нового html <img> объекта
         const img = new Image();
         img.src = this.saved;
-        img.onload = () => {
+        img.onload = async function (){
             //очищение всего холста
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
             //нанесение на холст сохраненного изображения
@@ -51,9 +49,9 @@ export default class Line extends Tool {
 
             //рисование новой фигуры
             this.ctx.beginPath()
-            this.ctx.moveTo(this.startX, this.startY) //начальная точка
+            this.ctx.moveTo(this.currentX, this.currentY) //начальная точка
             this.ctx.lineTo(x,y) //текущая точка
             this.ctx.stroke() //контур фигуры
-        }
+        }.bind(this)
     }
 }
