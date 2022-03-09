@@ -17,9 +17,18 @@ const Canvas = observer(() => {
         ToolStore.setTool(new Brush(canvasRef.current))
     }, [])
 
+    const mouseDownHandler = () => {
+        //добавление в массив состояний холста текущий снимок
+        CanvasStore.pushToUndo(canvasRef.current.toDataURL())
+    }
+
     return (
         <div className='canvas'>
-            <canvas ref={canvasRef} width={600} height={400} />
+            <canvas
+                onMouseDown={()=>mouseDownHandler()}
+                ref={canvasRef}
+                width={600}
+                height={400} />
         </div>
     )
 })

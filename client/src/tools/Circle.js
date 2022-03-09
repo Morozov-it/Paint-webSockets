@@ -47,7 +47,7 @@ export default class Circle extends Tool {
         //создание нового html <img> объекта
         const img = new Image();
         img.src = this.saved;
-        img.onload = async function () {
+        img.onload = () => {
             //очищение всего холста
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
             //нанесение на холст сохраненного изображения
@@ -58,6 +58,6 @@ export default class Circle extends Tool {
             this.ctx.arc(x, y, radius, 0, 2 * Math.PI)//координаты фигуры
             this.ctx.fill() //заполнение фигуры
             this.ctx.stroke() //контур фигуры
-        }.bind(this)
+        }
     }
 }

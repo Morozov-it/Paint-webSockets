@@ -53,8 +53,12 @@ const ToolBar = observer(() => {
                 }}
                 type='color'
                 className='toolbar__color'></input>
-            <button className='toolbar__btn undo'></button>
-            <button className='toolbar__btn redo'></button>
+            <button
+                onClick={()=>CanvasStore.undo()}
+                className='toolbar__btn undo'></button>
+            <button
+                onClick={()=>CanvasStore.redo()}
+                className='toolbar__btn redo'></button>
             <button className='toolbar__btn save'></button>
         </div>
     )
