@@ -1,6 +1,6 @@
 import Tool from "./Tool";
 
-export default class Brush extends Tool {
+export default class Eraser extends Tool {
     constructor(canvas) {
         super(canvas)//вызывает конструктор родительского класса
         this.listen()
@@ -23,6 +23,8 @@ export default class Brush extends Tool {
         this.ctx.beginPath()
         //получение начальных координат курсора
         this.ctx.moveTo(e.pageX - e.target.offsetLeft, e.pageY - e.target.offsetTop)
+        this.ctx.strokeStyle = '#fff';
+        this.ctx.lineWidth = 10;
     }
     mouseMoveHandler(e) {
         //проверка нажатия левой кнопки мыши

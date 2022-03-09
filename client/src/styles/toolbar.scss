@@ -17,37 +17,44 @@
         border: none;
         outline: none;
         cursor: pointer;
-        background-size: cover;
         margin-left: 10px;
+        background-size: 90% 90%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: inherit;
     }
     &__color {
         margin-left: 10px;
+        cursor: pointer;
     }
     .brush {
-        background: url(../assets/brush.png) no-repeat center center;
+        background-image: url(../assets/brush.png);
     }
     .rect {
-        background: url(../assets/rect.png) no-repeat center center;
+        background-image: url(../assets/rect.png);
     }
     .circle {
-        background: url(../assets/circle.png) no-repeat center center;
+        background-image: url(../assets/circle.png);
     }
     .eraser {
-        background: url(../assets/eraser.png) no-repeat center center;
+        background-image: url(../assets/eraser.png);
     }
     .line {
-        background: url(../assets/line.png) no-repeat center center;
+        background-image: url(../assets/line.png);
     }
     .undo {
         margin-left: auto;
-        background: url(../assets/undo.png) no-repeat center center;
+        background-image: url(../assets/undo.png);
     }
     .redo {
-        background: url(../assets/redo.png) no-repeat center center;
+        background-image: url(../assets/redo.png);
     }
     .save {
-        background: url(../assets/save.png) no-repeat center center;
+        background-image: url(../assets/save.png);
         margin-right: 10px;
+    }
+    .active {
+        border: 2px solid red;
     }
 }
 .setting {

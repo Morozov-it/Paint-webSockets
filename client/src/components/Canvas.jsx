@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import {observer} from 'mobx-react-lite'
+import { observer } from 'mobx-react-lite';
+
 import '../styles/canvas.scss';
 import CanvasStore from '../store/CanvasStore';
 import ToolStore from '../store/ToolStore';
