@@ -2,6 +2,8 @@
 
 ### All installed dependencies
 Server:
+npm i express express-ws
+npm i -D nodemon
 
 
 Front:
