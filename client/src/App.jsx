@@ -7,7 +7,9 @@ import SettingBar from './components/SettingBar';
 import Canvas from './components/Canvas';
 
 
+
 function App() {
+
   return (
     <BrowserRouter>
       <Routes>

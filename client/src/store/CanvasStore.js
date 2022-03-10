@@ -5,6 +5,7 @@ class CanvasStore {
     _canvas = null
     _undolist = []
     _redolist = []
+    _username = ''
 
     //autoobservable
     constructor() {
@@ -14,6 +15,9 @@ class CanvasStore {
     //actions
     setCanvas(canvas) {
         this._canvas = canvas
+    }
+    setUsername(name) {
+        this._username = name
     }
     pushToUndo(data) {
         this._undolist.push(data)

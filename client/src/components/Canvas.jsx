@@ -1,13 +1,16 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 
 import '../styles/canvas.scss';
 import CanvasStore from '../store/CanvasStore';
 import ToolStore from '../store/ToolStore';
 import Brush from '../tools/Brush';
+import Modal from './Modal';
 
 
 const Canvas = observer(() => {
+    const [modal, setModal] = useState(true)
+    
     const canvasRef = useRef()
 
     useEffect(() => {
@@ -23,6 +26,8 @@ const Canvas = observer(() => {
     }
 
     return (
+        <>
+        {modal && <Modal {...{ setModal }}/>}
         <div className='canvas'>
             <canvas
                 onMouseDown={()=>mouseDownHandler()}
@@ -30,6 +35,7 @@ const Canvas = observer(() => {
                 width={600}
                 height={400} />
         </div>
+        </>
     )
 })
 
