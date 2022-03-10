@@ -29,6 +29,9 @@ class CanvasStore {
     get canvas() {
         return this._canvas
     }
+    get username() {
+        return this._username
+    }
 
     //отмена действия
     undo() {

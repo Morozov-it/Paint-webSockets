@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-
+import { useParams } from 'react-router-dom'
 import '../styles/canvas.scss';
 import CanvasStore from '../store/CanvasStore';
 import ToolStore from '../store/ToolStore';
@@ -9,9 +9,13 @@ import Modal from './Modal';
 
 
 const Canvas = observer(() => {
-    const [modal, setModal] = useState(true)
-    
+    const { id } = useParams()
     const canvasRef = useRef()
+    const [isError, setIsError] = useState('')
+    const [modal, setModal] = useState(true)
+    const closeModal = () => {
+        setModal(false)
+    }
 
     useEffect(() => {
         //первый рендер получение объекта canvas
@@ -25,9 +29,41 @@ const Canvas = observer(() => {
         CanvasStore.pushToUndo(canvasRef.current.toDataURL())
     }
 
+    //функция открытия связи с сервером по протоколу ws
+    const connectHandler = (username) => {
+        try {
+            if (username) {
+                setIsError('');
+                CanvasStore.setUsername(username);
+
+                //создание соединения по websocket
+                const socket = new WebSocket('ws://localhost:5000/');
+                //слушатель открытия соединения
+                socket.onopen = () => {
+                    console.log('Connection established')
+                    socket.send(JSON.stringify({
+                        id,
+                        username,
+                        method: 'connection'
+                    }))
+                }
+                //слушатель получения сообщений
+                socket.onmessage = function(event) {
+                    console.log(event.data)
+                };
+
+                setModal(false)
+            } else {
+                throw new Error('Name can not be empty');
+            }
+        } catch (e) {
+            setIsError(e.message)
+        }
+    }
+
     return (
         <>
-        {modal && <Modal {...{ setModal }}/>}
+        {modal && <Modal {...{ closeModal, connectHandler, isError }}/>}
         <div className='canvas'>
             <canvas
                 onMouseDown={()=>mouseDownHandler()}

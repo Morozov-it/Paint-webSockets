@@ -1,24 +1,18 @@
 import React, { useRef } from 'react';
-import CanvasStore from '../store/CanvasStore';
 import '../styles/modal.scss';
 
-const Modal = ({ setModal }) => {
-    const inputRef = useRef()
 
-    const connectHandler = () => {
-        CanvasStore.setUsername(inputRef.current.value);
-        setModal(false)
-    }
+const Modal = ({ closeModal, connectHandler, isError }) => {
+    const inputRef = useRef()
     
     return (
-        <div className="modal" onClick={()=>setModal(false)}>
-            <div onClick={(e)=>e.stopPropagation()}
-                className="modal-dialog">
+        <div className="modal" >
+            <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
                         <h3 className="modal-title">User name</h3>
                         <button
-                            onClick={()=>setModal(false)}
+                            onClick={closeModal}
                             type="button"
                             className="btn-close"></button>
                     </div>
@@ -26,10 +20,12 @@ const Modal = ({ setModal }) => {
                         <input
                             ref={inputRef}
                             type="text" className="form-control" id="user" />
+                        {isError &&
+                            <div className="error">{isError}</div>}
                     </div>
                     <div className="modal-footer">
                         <button
-                            onClick={connectHandler}
+                            onClick={()=>connectHandler(inputRef.current.value)}
                             type="button"
                             className="btn btn-primary">Log in</button>
                     </div>
