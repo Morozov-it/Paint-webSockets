@@ -4,11 +4,13 @@
 Server:
 npm i express express-ws
 npm i -D nodemon
+npm i cors
 
 
 Front:
 npm i node-sass@4.14.1
 npm i mobx mobx-react-lite
+npm i axios
 
 
 

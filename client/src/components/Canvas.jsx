@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 import { observer } from 'mobx-react-lite';
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom';
 import '../styles/canvas.scss';
 import CanvasStore from '../store/CanvasStore';
 import ToolStore from '../store/ToolStore';
+
 import Modal from './Modal';
 import Brush from '../tools/Brush';
 import Rect from '../tools/Rect';
@@ -23,12 +25,29 @@ const Canvas = observer(() => {
 
     useEffect(() => {
         //первый рендер получение объекта canvas
-        CanvasStore.setCanvas(canvasRef.current)
+        const canvas = canvasRef.current
+        const ctx = canvas.getContext('2d')
+        CanvasStore.setCanvas(canvas)
+        axios.get(`http://localhost:5000/image?id=${id}`)
+            .then(response => {
+                //создание нового html <img> объекта
+                const img = new Image()
+                img.src = response.data
+                img.onload = () => {
+                    //очищение всего холста
+                    ctx.clearRect(0, 0, canvas.width, canvas.height)
+                    //нанесение на холст сохраненного изображения
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+                }
+            })
     }, [])
 
     const mouseDownHandler = () => {
         //добавление в массив состояний холста текущий снимок
-        CanvasStore.pushToUndo(canvasRef.current.toDataURL())
+        const img = canvasRef.current.toDataURL()
+        CanvasStore.pushToUndo(img)
+        axios.post(`http://localhost:5000/image?id=${id}`, { img })
+            .catch(error=>console.log(error))
     }
 
     //функция открытия связи с сервером по протоколу ws
