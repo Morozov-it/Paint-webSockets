@@ -1,8 +1,8 @@
 import Tool from "./Tool";
 
 export default class Circle extends Tool {
-    constructor(canvas) {
-        super(canvas)//вызывает конструктор родительского класса
+    constructor(canvas, socket, id) {
+        super(canvas, socket, id)//вызывает конструктор родительского класса
         this.listen()
     }
 
@@ -27,6 +27,27 @@ export default class Circle extends Tool {
     }
     mouseUpHandler(e) {
         this.mouseDown = false
+        this.socket.send(JSON.stringify({
+            id: this.id,
+            method: 'draw',
+            figure: {
+                type: 'circle',
+                x: this.startX,
+                y: this.startY,
+                radius: this.radius,
+                fillStyle: this.ctx.fillStyle,
+                strokeStyle: this.ctx.strokeStyle,
+                lineWidth: this.ctx.lineWidth
+            }
+        }))
+
+        this.socket.send(JSON.stringify({
+            method: 'draw',
+            id: this.id,
+            figure: {
+                type: 'finish'
+            }
+        }))
     }
     mouseMoveHandler(e) {
         //проверка нажатия левой кнопки мыши
@@ -36,13 +57,13 @@ export default class Circle extends Tool {
             let currentY = e.pageY - e.target.offsetTop
             let width = currentX - this.startX
             let height = currentY - this.startY
-            let radius = Math.sqrt(width**2 + height**2)
+            this.radius = Math.sqrt(width**2 + height**2)
             //вызов функции рисования с полученными координатами
-            this.draw(this.startX, this.startY, radius)
+            this.draw(this.startX, this.startY, this.radius)
         }
     }
 
-    //функция рисования прямоугольника
+    //функция рисования круга
     draw(x, y, radius) {
         //создание нового html <img> объекта
         const img = new Image();
@@ -59,5 +80,17 @@ export default class Circle extends Tool {
             this.ctx.fill() //заполнение фигуры
             this.ctx.stroke() //контур фигуры
         }
+    }
+
+    //функция рисования круга
+    static staticDraw(ctx, x, y, radius, fillStyle, strokeStyle, lineWidth) {
+        //рисование новой фигуры
+        ctx.fillStyle = fillStyle;
+        ctx.strokeStyle = strokeStyle;
+        ctx.lineWidth = lineWidth;
+        ctx.beginPath()
+        ctx.arc(x, y, radius, 0, 2 * Math.PI)//координаты фигуры
+        ctx.fill() //заполнение фигуры
+        ctx.stroke() //контур фигуры
     }
 }

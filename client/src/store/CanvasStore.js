@@ -6,6 +6,8 @@ class CanvasStore {
     _undolist = []
     _redolist = []
     _username = ''
+    _socket = null
+    _sessionId = null
 
     //autoobservable
     constructor() {
@@ -25,12 +27,24 @@ class CanvasStore {
     pushToRedo(data) {
         this._redolist.push(data)
     }
+    setSocket(socket) {
+        this._socket = socket
+    }
+    setSessionId(id) {
+        this._sessionId = id
+    }
 
     get canvas() {
         return this._canvas
     }
     get username() {
         return this._username
+    }
+    get socket() {
+        return this._socket
+    }
+    get sessionId() {
+        return this._sessionId
     }
 
     //отмена действия

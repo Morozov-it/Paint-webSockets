@@ -9,6 +9,7 @@ import Rect from '../tools/Rect';
 import Circle from '../tools/Circle';
 import Eraser from '../tools/Eraser';
 import Line from '../tools/Line';
+import Clear from '../tools/Clear';
 
 
 
@@ -19,40 +20,44 @@ const ToolBar = observer(() => {
             <button
                 onClick={() => {
                     ToolStore.setActive('brush')
-                    ToolStore.setTool(new Brush(CanvasStore.canvas))
+                    ToolStore.setTool(new Brush(CanvasStore.canvas, CanvasStore.socket, CanvasStore.sessionId))
                 }}
                 className={`toolbar__btn brush ${active === 'brush' && 'active'}`}></button>
             <button
                 onClick={() => {
                     ToolStore.setActive('rect')
-                    ToolStore.setTool(new Rect(CanvasStore.canvas))
+                    ToolStore.setTool(new Rect(CanvasStore.canvas, CanvasStore.socket, CanvasStore.sessionId))
                 }}
                 className={`toolbar__btn rect ${active === 'rect' && 'active'}`}></button>
             <button
                 onClick={() => {
                     ToolStore.setActive('circle')
-                    ToolStore.setTool(new Circle(CanvasStore.canvas))
+                    ToolStore.setTool(new Circle(CanvasStore.canvas, CanvasStore.socket, CanvasStore.sessionId))
                 }}
                 className={`toolbar__btn circle ${active === 'circle' && 'active'}`}></button>
             <button
                 onClick={() => {
                     ToolStore.setActive('eraser')
-                    ToolStore.setTool(new Eraser(CanvasStore.canvas))
+                    ToolStore.setTool(new Eraser(CanvasStore.canvas, CanvasStore.socket, CanvasStore.sessionId))
                 }}
                 className={`toolbar__btn eraser ${active === 'eraser' && 'active'}`}></button>
             <button
                 onClick={() => {
                     ToolStore.setActive('line')
-                    ToolStore.setTool(new Line(CanvasStore.canvas))
+                    ToolStore.setTool(new Line(CanvasStore.canvas, CanvasStore.socket, CanvasStore.sessionId))
                 }}
                 className={`toolbar__btn line ${active === 'line' && 'active'}`}></button>
             <input
                 onChange={(e) => {
                     ToolStore.setFillColor(e.target.value);
-                    ToolStore.setStrokeColor(e.target.value);
                 }}
                 type='color'
                 className='toolbar__color'></input>
+            <button
+                onClick={() => {
+                    new Clear(CanvasStore.canvas, CanvasStore.socket, CanvasStore.sessionId)
+                }}
+                className={`toolbar__btn reset`}></button>
             <button
                 onClick={()=>CanvasStore.undo()}
                 className='toolbar__btn undo'></button>

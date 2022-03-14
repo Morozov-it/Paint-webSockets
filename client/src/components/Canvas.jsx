@@ -4,8 +4,12 @@ import { useParams } from 'react-router-dom'
 import '../styles/canvas.scss';
 import CanvasStore from '../store/CanvasStore';
 import ToolStore from '../store/ToolStore';
-import Brush from '../tools/Brush';
 import Modal from './Modal';
+import Brush from '../tools/Brush';
+import Rect from '../tools/Rect';
+import Eraser from '../tools/Eraser';
+import Circle from '../tools/Circle';
+import Line from '../tools/Line';
 
 
 const Canvas = observer(() => {
@@ -20,8 +24,6 @@ const Canvas = observer(() => {
     useEffect(() => {
         //первый рендер получение объекта canvas
         CanvasStore.setCanvas(canvasRef.current)
-        //сразу присваивание инструмента кисть
-        ToolStore.setTool(new Brush(canvasRef.current))
     }, [])
 
     const mouseDownHandler = () => {
@@ -35,9 +37,15 @@ const Canvas = observer(() => {
             if (username) {
                 setIsError('');
                 CanvasStore.setUsername(username);
-
                 //создание соединения по websocket
                 const socket = new WebSocket('ws://localhost:5000/');
+                //сохранение данных store
+                CanvasStore.setSocket(socket)
+                CanvasStore.setSessionId(id)
+
+                //активация инструмента кисть
+                ToolStore.setTool(new Brush(canvasRef.current, socket, id))
+
                 //слушатель открытия соединения
                 socket.onopen = () => {
                     console.log('Connection established')
@@ -48,10 +56,19 @@ const Canvas = observer(() => {
                     }))
                 }
                 //слушатель получения сообщений
-                socket.onmessage = function(event) {
-                    console.log(event.data)
+                socket.onmessage = function (event) {
+                    let message = JSON.parse(event.data);
+                    switch (message.method) {
+                        case 'connection':
+                            console.log(`User named ${message.username} connected`)
+                            break;
+                        case 'draw':
+                            drawHandler(message)
+                            break;
+                        default:
+                            break;
+                    }
                 };
-
                 setModal(false)
             } else {
                 throw new Error('Name can not be empty');
@@ -61,20 +78,50 @@ const Canvas = observer(() => {
         }
     }
 
+    //функция рисования через ws
+    const drawHandler = (msg) => {
+        const figure = msg.figure
+        const ctx = canvasRef.current.getContext('2d')
+        switch (figure.type) {
+            case 'brush':
+                Brush.draw(ctx, figure.x, figure.y, figure.strokeStyle, figure.lineWidth)
+                break;
+            case 'rect':
+                Rect.staticDraw(ctx, figure.x, figure.y, figure.width, figure.height, figure.fillStyle, figure.strokeStyle, figure.lineWidth)
+                break;
+            case 'circle':
+                Circle.staticDraw(ctx, figure.x, figure.y, figure.radius,  figure.fillStyle, figure.strokeStyle, figure.lineWidth)
+                break;
+            case 'eraser':
+                Eraser.draw(ctx, figure.x, figure.y, figure.lineWidth)
+                break;
+            case 'line':
+                Line.staticDraw(ctx, figure.x, figure.y, figure.currentX, figure.currentY, figure.fillStyle, figure.strokeStyle, figure.lineWidth)
+                break;
+            case 'finish':
+                ctx.beginPath()
+                break;
+            case 'clear':
+                ctx.clearRect(0, 0, figure.width, figure.height)
+                break;
+            default:
+                break;
+        }
+    }
+
     return (
         <>
-        {modal && <Modal {...{ closeModal, connectHandler, isError }}/>}
+        {modal && <Modal {...{ closeModal, connectHandler, isError }} />}
         <div className='canvas'>
             <canvas
                 onMouseDown={()=>mouseDownHandler()}
                 ref={canvasRef}
                 width={600}
                 height={400} />
-        </div>
+            </div>
         </>
     )
 })
-
 //в канвас обязательно задавать ширину и высоту в props
 
 export default React.memo(Canvas);

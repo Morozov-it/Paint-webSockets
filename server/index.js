@@ -18,14 +18,14 @@ app.ws('/', (ws, req) => {
             case 'connection':
                 connectionHandler(ws, message)
                 break;
-            case 'message':
-                //messageHandler(ws, message)
+            case 'draw':
+                broadcastConnection(ws, message)
                 break;
         }
     })
 
     //функция ответа на клиент
-    ws.send('Success connect')
+    //ws.send('Success connect')
 })
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
@@ -34,14 +34,13 @@ app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 const connectionHandler = (ws, message) => {
     //для раздела сессий каждому websocket присваивается свой id
     ws.id = message.id
-
     //функция массовой рассылки уведомления о подключении пользователя
     broadcastConnection(ws, message)
 }
 const broadcastConnection = (ws, message) => {
     aWss.clients.forEach(client => {
         if (client.id === message.id) {
-            client.send(`User ${message.username} is connected`)
+            client.send(JSON.stringify(message))
         }
     })
 } 

@@ -1,8 +1,8 @@
 import Tool from "./Tool";
 
 export default class Line extends Tool {
-    constructor(canvas) {
-        super(canvas)//вызывает конструктор родительского класса
+    constructor(canvas, socket, id) {
+        super(canvas, socket, id)//вызывает конструктор родительского класса
         this.listen()
     }
 
@@ -17,31 +17,56 @@ export default class Line extends Tool {
     mouseDownHandler(e) {
         this.mouseDown = true
         //запись стартовой позиции курсора
-        this.currentX = e.pageX - e.target.offsetLeft;
-        this.currentY = e.pageY - e.target.offsetTop;
+        this.startX = e.pageX - e.target.offsetLeft;
+        this.startY = e.pageY - e.target.offsetTop;
         //начало рисования новой линии
         this.ctx.beginPath()
-        this.ctx.moveTo(this.currentX, this.currentY)
+        this.ctx.moveTo(this.startX, this.startY)
         //сохранение данных позиции в canvas
         this.saved = this.canvas.toDataURL();
-    }
-    mouseUpHandler(e) {
-        this.mouseDown = false
     }
     mouseMoveHandler(e) {
         //проверка нажатия левой кнопки мыши
         if (this.mouseDown) {
+            this.currentX = e.pageX - e.target.offsetLeft
+            this.currentY = e.pageY-e.target.offsetTop
             //вызов функции рисования с текущими координатами
-            this.draw(e.pageX-e.target.offsetLeft, e.pageY-e.target.offsetTop)
+            this.draw(this.currentX, this.currentY)
         }
     }
+    mouseUpHandler(e) {
+        this.mouseDown = false
+        this.socket.send(JSON.stringify({
+            id: this.id,
+            method: 'draw',
+            figure: {
+                type: 'line',
+                x: this.startX,
+                y: this.startY,
+                currentX: this.currentX,
+                currentY: this.currentY,
+                fillStyle: this.ctx.fillStyle,
+                strokeStyle: this.ctx.strokeStyle,
+                lineWidth: this.ctx.lineWidth
+            }
+        }))
 
-    //функция рисования прямоугольника
+        this.socket.send(JSON.stringify({
+            method: 'draw',
+            id: this.id,
+            figure: {
+                type: 'finish'
+            }
+        }))
+    }
+    
+
+    //функция рисования прямой
     draw(x, y) {
         //создание нового html <img> объекта
         const img = new Image();
         img.src = this.saved;
-        img.onload = async function (){
+        img.onload = () => {
             //очищение всего холста
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
             //нанесение на холст сохраненного изображения
@@ -49,9 +74,21 @@ export default class Line extends Tool {
 
             //рисование новой фигуры
             this.ctx.beginPath()
-            this.ctx.moveTo(this.currentX, this.currentY) //начальная точка
+            this.ctx.moveTo(this.startX, this.startY) //начальная точка
             this.ctx.lineTo(x,y) //текущая точка
             this.ctx.stroke() //контур фигуры
-        }.bind(this)
+        }
+    }
+
+    //функция рисования прямой через ws
+    static staticDraw(ctx, x, y, currentX, currentY, fillStyle, strokeStyle, lineWidth) {
+        //рисование новой фигуры
+        ctx.fillStyle = fillStyle;
+        ctx.strokeStyle = strokeStyle;
+        ctx.lineWidth = lineWidth;
+        ctx.beginPath()
+        ctx.moveTo(x, y) //начальная точка
+        ctx.lineTo(currentX, currentY) //текущая точка
+        ctx.stroke() //контур фигуры
     }
 }
