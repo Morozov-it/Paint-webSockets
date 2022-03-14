@@ -15,6 +15,19 @@ import Clear from '../tools/Clear';
 
 const ToolBar = observer(() => {
     let active = ToolStore.active
+
+    const download = () => {
+        const dataUrl = CanvasStore.canvas.toDataURL()
+        //способ скачивания элементов со страниц
+        const a = document.createElement('a')
+        a.href = dataUrl
+        a.download = CanvasStore.sessionId + '.jpg'
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+
+    }
+
     return (
         <div className='toolbar'>
             <button
@@ -64,7 +77,9 @@ const ToolBar = observer(() => {
             <button
                 onClick={()=>CanvasStore.redo()}
                 className='toolbar__btn redo'></button>
-            <button className='toolbar__btn save'></button>
+            <button
+                onClick={download}
+                className='toolbar__btn save'></button>
         </div>
     )
 })
